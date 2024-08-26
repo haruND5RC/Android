@@ -1,0 +1,92 @@
+package com.example.health;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        Button btnResult = findViewById(R.id.btnResult);
+        btnResult.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        EditText editHeight = findViewById(R.id.editHeight);//身長の入力枠を見つけて
+        EditText editWeight = findViewById(R.id.editWeight);//体重の入力枠を見つけて
+
+        String inputWeight = editWeight.getText().toString();//入力された文字列の体重
+        String inputHeight = editHeight.getText().toString();//入力された文字列の身長
+
+        double weight = Double.parseDouble(inputWeight);//体重を数列に
+        double heightM = Double.parseDouble(inputHeight)/100;//身長を数列にcm→m
+
+        double bmi = weight / (heightM * heightM);//bmi
+        double sbw = (heightM * heightM) * 22;//標準体重
+
+        String[] obesityArray = {"低体重(痩せ)", "標準", "肥満度１", "肥満度２", "肥満度３", "肥満度４"};
+        int result =getObesity(bmi);//肥満度判定メソッド
+        resultView(obesityArray,result,sbw,bmi);//結果の表示メソッド
+
+    }
+
+    public int getObesity(double bmi) {//肥満度判定メソッド
+        int result;
+        if (bmi < 18.5) {
+            result = 0;
+        } else if (bmi < 25) {
+            result =1;
+        } else if (bmi < 30) {
+            result =2;
+        } else if (bmi < 35) {
+            result = 3;
+        } else if (bmi < 40) {
+            result = 4;
+        } else {
+            result =5;
+        }
+        return result;
+
+    }
+
+    public void resultView(String[] obesityArray, int result, double sbw,double bmi){
+        TextView bmiView=findViewById(R.id.bmiView);//BMIの表示枠を見つけて
+        TextView resultView = findViewById(R.id.resultView);//結果の表示枠を見つけて
+        ImageView bodyView=findViewById(R.id.bodyView);//画像の表示枠を見つけて
+
+
+        if (result==0){
+            bodyView.setImageResource(R.drawable.body2);
+        }else if(result==1||result==2){
+            bodyView.setImageResource(R.drawable.body1);
+        }else{
+            bodyView.setImageResource(R.drawable.body3);
+        }
+
+        bmiView.setText(String.format("BMI:%.2f%n標準体重:%.2f", bmi,sbw));
+        resultView.setText(obesityArray[result]);
+    }
+
+}
