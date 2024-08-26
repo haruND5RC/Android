@@ -1,0 +1,66 @@
+package com.example.imageomikuji;
+
+import android.os.Bundle;
+import android.view.MotionEvent;
+import android.widget.Button;
+import android.widget.ImageView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import java.util.Random;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        ImageView omikuji=findViewById(R.id.omikuji);
+
+        //もしおみくじの箱をタップされたら、箱のイラストを消す
+
+        if(event.getAction()==MotionEvent.ACTION_DOWN){
+            omikuji.setImageDrawable(null);
+            getOmikuju();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void getOmikuju(){
+
+        ImageView omikujiArea=findViewById(R.id.omikujiArea);
+
+        Random rand =new Random();
+        int omikujiNum = rand.nextInt(4);
+        if (omikujiNum==0){
+            omikujiArea.setImageResource(R.drawable.daikichi);
+        }else if(omikujiNum==1){
+            omikujiArea.setImageResource(R.drawable.chuukichi);
+        }else if(omikujiNum==2){
+            omikujiArea.setImageResource(R.drawable.suekichi);
+        }else{
+            omikujiArea.setImageResource(R.drawable.kyou);
+        }
+    }
+
+
+
+}
